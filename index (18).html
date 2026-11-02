@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CleanFrame on a Samsung TV: setup checklist (draft)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@300..900&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --p:#6750a4; --onp:#fff; --pc:#eaddff; --onpc:#21005d;
+  --scc:#e8def8; --onscc:#1d192b; --tc:#ffd8e4; --ontc:#31111d; --t:#7d5260;
+  --s:#fef7ff; --scl:#f7f2fa; --sc:#f3edf7; --sch:#ece6f0; --schh:#e6e0e9;
+  --on:#1d1b20; --onv:#49454f; --ol:#79747e; --olv:#cac4d0; --err:#b3261e;
+  --spring:cubic-bezier(.34,1.56,.64,1); --ease:cubic-bezier(.2,0,0,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --p:#d0bcff; --onp:#381e72; --pc:#4f378b; --onpc:#eaddff;
+    --scc:#4a4458; --onscc:#e8def8; --tc:#633b48; --ontc:#ffd8e4; --t:#efb8c8;
+    --s:#141218; --scl:#1d1b20; --sc:#211f26; --sch:#2b2930; --schh:#36343b;
+    --on:#e6e0e9; --onv:#cac4d0; --ol:#938f99; --olv:#49454f; --err:#f2b8b5;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:5rem}
+body{margin:0;background:var(--s);color:var(--on);font:400 1rem/1.6 "Roboto Flex",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.01em}
+main{max-width:52rem;margin:0 auto;padding:1rem 1rem 4rem}
+p{margin:.5rem 0}
+code{font-family:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--sch);padding:.05rem .35rem;border-radius:6px}
+a{color:var(--p);font-weight:500}
+
+/* hero */
+.hero{display:flex;gap:1.5rem;align-items:center;justify-content:space-between;background:var(--pc);color:var(--onpc);border-radius:48px 48px 48px 16px;padding:2rem 1.75rem;margin:.5rem 0 1rem}
+h1{font:800 clamp(1.9rem,6vw,2.9rem)/1.08 "Roboto Flex",system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 .75rem}
+.lede{margin:0;max-width:44ch;opacity:.9}
+.cookie{position:relative;flex:none;width:6.5rem;height:6.5rem;display:grid;place-items:center;color:var(--onp)}
+.cookie svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--p);transition:transform .5s var(--spring)}
+.cookie.pop svg{transform:scale(1.12) rotate(18deg)}
+.cookie span{position:relative;font:800 1.5rem/1 "Roboto Flex",sans-serif}
+@media (max-width:34rem){.hero{flex-direction:column-reverse;align-items:flex-start;border-radius:40px 40px 40px 14px}}
+
+/* notice */
+.warn{display:flex;gap:1rem;background:var(--tc);color:var(--ontc);border-radius:28px;padding:1.1rem 1.25rem;margin:1rem 0}
+.warn .ic{flex:none;width:2.25rem;height:2.25rem;border-radius:50%;background:var(--t);color:var(--tc);display:grid;place-items:center;font-weight:800}
+.warn p{margin:.3rem 0}
+.warn a{color:inherit}
+
+/* inputs */
+.setup{background:var(--sc);border-radius:32px;padding:1.5rem;margin:1rem 0;display:grid;gap:1.1rem 1.25rem;grid-template-columns:1fr 1fr}
+@media (max-width:34rem){.setup{grid-template-columns:1fr;padding:1.25rem}}
+.os{grid-column:1/-1;border:0;margin:0;padding:0}
+.os legend{font-weight:600;padding:0;margin-bottom:.6rem;color:var(--onv)}
+.seg{display:inline-flex;gap:2px;max-width:100%}
+.seg label{position:relative;display:block}
+.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg span{display:flex;align-items:center;gap:.4rem;height:3.5rem;padding:0 1.5rem;border:1px solid var(--ol);color:var(--onv);font-weight:500;border-radius:8px;transition:border-radius .4s var(--spring),background .2s,color .2s}
+.seg label:first-child span{border-radius:28px 8px 8px 28px}
+.seg label:last-child span{border-radius:8px 28px 28px 8px}
+.seg input:checked + span{background:var(--scc);color:var(--onscc);border-color:var(--scc);border-radius:28px;font-weight:700}
+.seg input:checked + span::before{content:"✓";font-weight:800}
+.seg input:focus-visible + span{outline:3px solid var(--p);outline-offset:2px}
+.field{position:relative}
+.field input{width:100%;height:3.5rem;padding:1.15rem 1rem .25rem;border:1px solid var(--ol);border-radius:16px;background:transparent;color:var(--on);font:inherit;transition:border-radius .3s var(--spring),border-color .2s}
+.field input::placeholder{color:transparent}
+.field input:focus::placeholder{color:var(--onv)}
+.field input:focus{outline:2px solid var(--p);outline-offset:-2px;border-color:var(--p);border-radius:28px}
+.field input[aria-invalid=true]{border-color:var(--err);outline-color:var(--err)}
+.field label{position:absolute;left:1rem;top:.95rem;color:var(--onv);pointer-events:none;transition:top .2s var(--ease),font-size .2s var(--ease),color .2s}
+.field input:focus + label,.field input:not(:placeholder-shown) + label{top:.35rem;font-size:.75rem;font-weight:500}
+.field input:focus + label{color:var(--p)}
+.hint{color:var(--onv);font-size:.8rem;margin:.35rem 1rem 0}
+
+/* progress */
+.progress{position:sticky;top:.5rem;z-index:5;display:flex;align-items:center;gap:1rem;background:var(--sch);border-radius:999px;padding:.7rem 1.25rem;margin:1rem 0}
+.progress #count{font-weight:600;white-space:nowrap}
+#wave{flex:1;height:20px;min-width:0}
+#wave .tr{stroke:var(--olv);stroke-width:4;stroke-linecap:round}
+#wave path{fill:none;stroke:var(--p);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#wave .tr{vector-effect:non-scaling-stroke}
+.wm{animation:wave 1.1s linear infinite}
+@keyframes wave{to{transform:translateX(-24px)}}
+
+/* steps */
+ol{list-style:none;margin:1rem 0;padding:0;display:grid;gap:.9rem}
+li.step{background:var(--scl);border-radius:28px;padding:1.1rem 1.25rem 1.25rem;transition:background .3s,border-radius .4s var(--spring)}
+li.step.done{background:var(--scc);color:var(--onscc);border-radius:28px 28px 28px 12px}
+.head{display:flex;gap:1rem;align-items:center}
+h2{font:700 1.2rem/1.25 "Roboto Flex",sans-serif;margin:0;letter-spacing:-.005em}
+.num{position:relative;flex:none;width:2.75rem;height:2.75rem;cursor:pointer}
+.num input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+.num span{position:absolute;inset:0;display:grid;place-items:center;background:var(--pc);color:var(--onpc);font-weight:800;border-radius:50%;transition:border-radius .5s var(--spring),transform .5s var(--spring),background .2s}
+.num input:checked + span{background:var(--p);color:var(--onp);border-radius:14px;transform:rotate(8deg);font-size:0}
+.num input:checked + span::after{content:"✓";font-size:1.25rem}
+.num input:focus-visible + span{outline:3px solid var(--p);outline-offset:3px}
+.tag{margin-left:auto;font-size:.8rem;font-weight:500;border:1px solid var(--ol);color:var(--onv);border-radius:8px;padding:.2rem .6rem;white-space:nowrap}
+.tag.you{background:var(--tc);color:var(--ontc);border-color:transparent}
+.body{margin:.5rem 0 0 3.75rem}
+@media (max-width:34rem){.body{margin-left:0}.tag{display:none}}
+.cmd{position:relative;margin:.8rem 0}
+pre{margin:0;background:var(--schh);color:var(--on);border-radius:20px;padding:1rem 5.5rem 1rem 1.1rem;overflow-x:auto;font:400 .85rem/1.6 "Roboto Mono",ui-monospace,Menlo,Consolas,monospace}
+.copy{position:absolute;top:.55rem;right:.55rem;height:2.25rem;padding:0 1rem;border:0;border-radius:999px;background:var(--scc);color:var(--onscc);font:600 .85rem "Roboto Flex",sans-serif;cursor:pointer;transition:transform .3s var(--spring),border-radius .3s var(--spring)}
+.copy:hover{border-radius:12px}
+.copy:active{transform:scale(.92)}
+:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+
+/* details + footer */
+details{background:var(--sc);border-radius:28px;padding:1rem 1.4rem;margin:1rem 0}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"⌄";font-size:1.3rem;transition:transform .4s var(--spring)}
+details[open] summary::after{transform:rotate(180deg)}
+details pre{margin-top:.5rem}
+[hidden]{display:none!important}
+footer{color:var(--onv);font-size:.85rem;margin:2rem .5rem 0}
+button.reset{background:var(--scc);color:var(--onscc);border:0;border-radius:999px;font:600 .85rem "Roboto Flex",sans-serif;padding:.45rem 1rem;cursor:pointer;margin-left:.4rem}
+button.reset:active{transform:scale(.94)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.wm{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div>
+    <h1>Install CleanFrame on a Samsung TV from Linux or Windows</h1>
+    <p class="lede">A checklist that fills in your TV’s and computer’s addresses so you can copy each command for your operating system. Everything runs in your browser. Nothing you type is sent anywhere.</p>
+  </div>
+  <div class="cookie" id="cookie" aria-hidden="true"><svg viewBox="-52 -52 104 104"><path id="cookiepath"/></svg><span id="cookienum">0/9</span></div>
+</header>
+
+<div class="warn" role="note">
+  <span class="ic" aria-hidden="true">!</span>
+  <div>
+    <p><strong>Draft: no step here has been tested end to end.</strong> The steps come from reading the <a href="https://github.com/nthnclrk/CleanFrame">CleanFrame repo</a> and its setup guide. Treat the repo’s own guide as the source of truth and report what works or fails.</p>
+    <p>CleanFrame is written for Samsung The Frame. Other Tizen TVs may not work, and older models (for example the 2018 N5200 series) are unconfirmed.</p>
+    <p>Linux (Fedora) is the main path. The Windows steps are a best reading of Samsung’s Windows tools and are even less tested. The repo’s own scripts are written for Mac and Linux and may not run on Windows.</p>
+    <p>Never publish your TV’s serial number, your Samsung certificate files or their passwords.</p>
+  </div>
+</div>
+
+<section class="setup" aria-label="Your details">
+  <fieldset class="os">
+    <legend>Your computer</legend>
+    <div class="seg">
+      <label><input type="radio" name="os" value="linux"><span>Linux</span></label>
+      <label><input type="radio" name="os" value="win"><span>Windows 10 or 11</span></label>
+    </div>
+  </fieldset>
+  <div>
+    <div class="field"><input id="tvip" type="text" inputmode="decimal" autocomplete="off" placeholder="192.168.1.50" spellcheck="false"><label for="tvip">TV IP address</label></div>
+    <p class="hint">TV: Settings → Network → Network Status</p>
+  </div>
+  <div>
+    <div class="field"><input id="pcip" type="text" inputmode="decimal" autocomplete="off" placeholder="192.168.1.20" spellcheck="false"><label for="pcip">Computer IP address</label></div>
+    <p class="hint" id="pchint"></p>
+  </div>
+</section>
+
+<div class="progress" role="status" aria-live="polite">
+  <span id="count">0 of 0 done</span>
+  <svg id="wave" viewBox="0 0 600 20" preserveAspectRatio="none" aria-hidden="true">
+    <defs><clipPath id="wc"><rect id="wclip" x="0" y="0" width="0" height="20"/></clipPath></defs>
+    <line class="tr" id="wtrack" x1="0" x2="600" y1="10" y2="10"/>
+    <g clip-path="url(#wc)"><g class="wm"><path id="wpath"/></g></g>
+  </svg>
+</div>
+
+<ol id="steps"></ol>
+
+<details id="fallback">
+  <summary>Fedora isn’t working? Try Ubuntu in a container</summary>
+  <p>Samsung’s Tizen tools list Ubuntu as the supported Linux. Fedora is not listed, so if the installer or tools fail, run them inside Ubuntu 20.04 and keep the TV connection on the host network. Untested.</p>
+  <div class="cmd"><pre>sudo dnf install -y distrobox podman
+distrobox create --name tizen --image ubuntu:20.04
+distrobox enter tizen</pre><button class="copy" type="button">Copy</button></div>
+  <p>Then repeat the install and connect steps inside that shell. Distrobox shares your home folder, so the CleanFrame folder is already there.</p>
+</details>
+
+<details id="wslnote" hidden>
+  <summary>Why not use WSL on Windows?</summary>
+  <p>WSL puts Linux behind its own virtual network, which can make it hard to reach the TV and to match the Host PC IP the TV expects. Using the Windows tools directly avoids that. Untested.</p>
+</details>
+
+<footer>
+  <p>Adapted from CleanFrame’s setup guide by nthnclrk (MIT). This page is unofficial and not affiliated with Samsung. <button class="reset" id="reset" type="button">Clear my checkmarks</button></p>
+</footer>
+</main>
+
+<script>
+(function(){
+  var STEPS = [
+    {id:"check", who:"you", title:"Check your computer and network",
+     text:"This only reads information. Paste the output into an issue or to Claude if something looks off.",
+     cmds:{
+       linux:["ip route get {TV}; cat /etc/fedora-release; python3 --version"],
+       win:["ipconfig\nTest-NetConnection {TV}\npython --version\ngit --version"]},
+     after:{win:"Run these in PowerShell. Your computer’s IP is the IPv4 Address of the adapter you use for Wi-Fi or Ethernet. The last two commands may say “not found” until the next step."}},
+    {id:"deps", who:"you", title:"Install the basics",
+     text:{linux:"Git and Python are needed for the repo. Samsung’s installer may ask for more libraries; add whatever it names.",
+           win:"Git and Python are needed for the repo. Close and reopen PowerShell afterward so the new programs are found."},
+     cmds:{
+       linux:["sudo dnf install -y git python3 curl unzip"],
+       win:["winget install --id Git.Git -e\nwinget install --id Python.Python.3.12 -e"]}},
+    {id:"clone", who:"you", title:"Get CleanFrame and read its guides",
+     text:"Read AGENTS.md and docs/agent-tv-setup-guide.md before going further. They override anything below.",
+     cmds:{
+       linux:["git clone https://github.com/nthnclrk/CleanFrame.git\ncd CleanFrame\nless AGENTS.md\nless docs/agent-tv-setup-guide.md"],
+       win:["git clone https://github.com/nthnclrk/CleanFrame.git\ncd CleanFrame\nnotepad AGENTS.md\nnotepad docs\\agent-tv-setup-guide.md"]}},
+    {id:"preview", who:"you", title:"Preview the app in a browser",
+     text:"Do this before touching the TV. Use the preview command from the repo’s README if it gives one. If the app is plain static files, this works:",
+     cmds:{linux:["python3 -m http.server 8000"], win:["python -m http.server 8000"]},
+     after:"Then open http://localhost:8000 in a browser."},
+    {id:"dev", who:"tv", title:"Turn on Developer Mode on the TV",
+     text:"On the TV: open Apps, press 1 2 3 4 5 on the remote, switch Developer mode on, enter your computer’s IP as the Host PC IP{PCNOTE}, then restart the TV. The TV only accepts connections from that address."},
+    {id:"sdk", who:"you", title:"Install Samsung’s TV tools",
+     text:{linux:"Download the command-line Tizen Studio installer for Linux from <a href=\"https://developer.samsung.com/smarttv\" rel=\"noopener\">Samsung’s developer site</a> (account may be required). Then run it from the folder it downloaded to.",
+           win:"Download the Tizen Studio installer for Windows (a .exe) from <a href=\"https://developer.samsung.com/smarttv\" rel=\"noopener\">Samsung’s developer site</a> (account may be required). Run it and install to the default folder, normally C:\\tizen-studio. Choose the TV extension tools if it asks which packages to add."},
+     cmds:{linux:["chmod +x ./web-cli_Tizen_Studio_*.bin\n./web-cli_Tizen_Studio_*.bin --accept-license ~/tizen-studio"]},
+     after:{linux:"The file name differs by version. Check it with ls first.", win:"If you installed somewhere else, change the paths in the commands below to match."}},
+    {id:"connect", who:"you", title:"Connect to the TV",
+     text:"Only run this when you’re ready for your computer to talk to the TV. The TV may show an allow prompt; accept it with the remote.",
+     cmds:{
+       linux:["~/tizen-studio/tools/sdb connect {TV}\n~/tizen-studio/tools/sdb devices"],
+       win:["& \"C:\\tizen-studio\\tools\\sdb.exe\" connect {TV}\n& \"C:\\tizen-studio\\tools\\sdb.exe\" devices"]}},
+    {id:"cert", who:"you", title:"Create your Samsung certificate",
+     text:"This needs a Samsung account sign-in, which you do yourself in the browser or the Certificate Manager. Use the repo’s guide for the exact flow. Keep the certificate files private."},
+    {id:"install", who:"you", title:"Sign the app and install it",
+     text:"Replace the bracketed names with your certificate profile and the device name from the devices list. Check the repo’s guide for the exact app folder and file names.",
+     cmds:{
+       linux:["~/tizen-studio/tools/ide/bin/tizen package -t wgt -s [your-profile] -- ./[app-folder]\n~/tizen-studio/tools/ide/bin/tizen install -n [app-name].wgt -t [device-name]"],
+       win:["& \"C:\\tizen-studio\\tools\\ide\\bin\\tizen.bat\" package -t wgt -s [your-profile] -- .\\[app-folder]\n& \"C:\\tizen-studio\\tools\\ide\\bin\\tizen.bat\" install -n [app-name].wgt -t [device-name]"]},
+     after:"Don’t change the Home button or startup settings unless you mean to."}
+  ];
+
+  function pick(v){ return (v && typeof v === "object" && !Array.isArray(v)) ? v[state.os] : v; }
+
+  var KEY = "cleanframe-checklist-v1";
+  var state = {tv:"", pc:"", done:{}, os:/Windows/i.test(navigator.userAgent) ? "win" : "linux"};
+  try { var raw = localStorage.getItem(KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch(e) {}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+  var ipRe = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
+  function valid(v){ return ipRe.test(v); }
+  function esc(s){ return s.replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+
+  var tvEl = document.getElementById("tvip"), pcEl = document.getElementById("pcip");
+  var list = document.getElementById("steps");
+  tvEl.value = state.tv; pcEl.value = state.pc;
+
+  function fill(s){
+    var tv = valid(state.tv) ? state.tv : "TV_IP";
+    return s.replace(/\{TV\}/g, tv);
+  }
+
+  function render(){
+    list.innerHTML = "";
+    STEPS.forEach(function(st, i){
+      var li = document.createElement("li");
+      li.className = "step" + (state.done[st.id] ? " done" : "");
+      var pcNote = valid(state.pc) ? " (" + state.pc + ")" : "";
+      var text = pick(st.text).replace("{PCNOTE}", pcNote);
+      var html = '<div class="head"><label class="num"><input type="checkbox" id="c-' + st.id + '"' + (state.done[st.id] ? " checked" : "") + ' aria-labelledby="t-' + st.id + '"><span>' + (i+1) + '</span></label>' +
+        '<h2 id="t-' + st.id + '">' + st.title + '</h2>' +
+        '<span class="tag' + (st.who === "tv" ? " you" : "") + '">' + (st.who === "tv" ? "on the TV" : "unverified") + '</span></div>' +
+        '<div class="body"><p>' + text + '</p>';
+      (pick(st.cmds) || []).forEach(function(c){
+        html += '<div class="cmd"><pre>' + esc(fill(c)) + '</pre><button class="copy" type="button">Copy</button></div>';
+      });
+      var after = pick(st.after); if (after) html += '<p>' + after + '</p>';
+      html += '</div>';
+      li.innerHTML = html;
+      li.querySelector('input[type=checkbox]').addEventListener("change", function(e){
+        state.done[st.id] = e.target.checked; save(); render(); progress();
+      });
+      list.appendChild(li);
+    });
+    bindCopy(list);
+  }
+
+  function bindCopy(root){
+    root.querySelectorAll(".copy").forEach(function(btn){
+      btn.onclick = function(){
+        var text = btn.parentNode.querySelector("pre").textContent;
+        var done = function(){ btn.textContent = "Copied"; setTimeout(function(){ btn.textContent = "Copy"; }, 1500); };
+        try { navigator.clipboard.writeText(text).then(done, function(){ btn.textContent = "Select text"; }); }
+        catch(e){ btn.textContent = "Select text"; }
+      };
+    });
+  }
+
+  function progress(){
+    var n = STEPS.filter(function(s){ return state.done[s.id]; }).length, pct = n / STEPS.length;
+    document.getElementById("count").textContent = n + " of " + STEPS.length + " done";
+    document.getElementById("cookienum").textContent = n + "/" + STEPS.length;
+    var w = Math.round(pct * 600);
+    document.getElementById("wclip").setAttribute("width", w);
+    var tr = document.getElementById("wtrack");
+    tr.setAttribute("x1", w ? Math.min(w + 10, 600) : 0);
+    tr.style.display = pct === 1 ? "none" : "";
+    var ck = document.getElementById("cookie");
+    if (n !== lastN) { ck.classList.add("pop"); setTimeout(function(){ ck.classList.remove("pop"); }, 350); lastN = n; }
+  }
+  var lastN = -1;
+
+  (function shapes(){
+    var d = "M0 10 Q6 2 12 10", x;
+    for (x = 24; x <= 648; x += 12) d += " T" + x + " 10";
+    document.getElementById("wpath").setAttribute("d", d);
+    var pts = [], i, R = 44;
+    for (i = 0; i <= 120; i++) {
+      var t = i / 120 * Math.PI * 2, r = R + 6 * Math.cos(9 * t);
+      pts.push((i ? "L" : "M") + (r * Math.cos(t)).toFixed(2) + " " + (r * Math.sin(t)).toFixed(2));
+    }
+    document.getElementById("cookiepath").setAttribute("d", pts.join(" ") + "Z");
+  })();
+
+  function onInput(el, key){
+    el.addEventListener("input", function(){
+      state[key] = el.value.trim();
+      el.setAttribute("aria-invalid", state[key] && !valid(state[key]) ? "true" : "false");
+      save(); render(); progress();
+    });
+  }
+  onInput(tvEl, "tv"); onInput(pcEl, "pc");
+
+  function applyOS(){
+    document.querySelectorAll('input[name=os]').forEach(function(r){ r.checked = (r.value === state.os); });
+    document.getElementById("fallback").hidden = state.os !== "linux";
+    document.getElementById("wslnote").hidden = state.os !== "win";
+    document.getElementById("pchint").textContent = state.os === "win"
+      ? "In PowerShell run ipconfig; use the IPv4 Address of your Wi-Fi or Ethernet adapter"
+      : "Run ip route get with the TV’s IP; use the address after “src”";
+  }
+  document.querySelectorAll('input[name=os]').forEach(function(r){
+    r.addEventListener("change", function(){ state.os = r.value; save(); applyOS(); render(); });
+  });
+  applyOS();
+
+  document.getElementById("reset").addEventListener("click", function(){
+    state.done = {}; save(); render(); progress();
+  });
+
+  bindCopy(document);
+  render(); progress();
+})();
+</script>
+</body>
+</html>
